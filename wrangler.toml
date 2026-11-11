@@ -1,0 +1,5 @@
+name = "citrus-craft"
+compatibility_date = "2026-10-01"
+[assets]
+directory = "./public"
+html_handling = "drop-trailing-slash"
