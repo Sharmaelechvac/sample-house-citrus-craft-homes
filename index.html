@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="sk">
+<html lang="en" class="sk" data-scheme="light">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -175,8 +175,23 @@ figcaption small{color:#64748b;font-weight:600}
 <script src="https://sharma-kit.sharma-crew.workers.dev/sharma-kit.js" defer></script>
 <style>
 /* Sharma kit bridge: room for the kit tab bar; app layout otherwise untouched. */
+/* C-upgrade 2026-11-19: native feel — view cross-fade + per-view scroll keep (see
+   showView), grouped inset lists (16px side margins, rounded grouped cards),
+   every tappable control 44px+. The .sheet elements here are engineered plan-sheet
+   images (diagram content), not bottom sheets — no kit-sheet conversion applies;
+   data is inline, so pull-to-refresh is N/A. */
 body.sk{padding-bottom:calc(var(--sk-tab-h,54px) + env(safe-area-inset-bottom,0px) + 14px)}
 .sk-header{z-index:60}
+.wrap{padding:0 16px 40px}
+.view.sk-enter{animation:skViewIn .2s cubic-bezier(.32,.72,.35,1)}
+@keyframes skViewIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.view.sk-enter{animation:none}}
+.link{display:flex;align-items:center;justify-content:center;min-height:44px}
+.maplink{min-height:44px}
+.rgd>button{min-height:44px}
+.rgd .items button{min-height:44px}
+.mleg a,.mleg div{min-height:44px}
+.jaddr a{min-height:44px}
 .vis span .sk-icon,.k .sk-icon{vertical-align:-3px}
 </style>
 </head>
@@ -565,14 +580,20 @@ body.sk{padding-bottom:calc(var(--sk-tab-h,54px) + env(safe-area-inset-bottom,0p
 <script>
 /* ---------- view routing ---------- */
 var views = { landing: document.getElementById('view-landing'), tour: document.getElementById('view-tour'), house: document.getElementById('view-house') };
+var skScroll={};
 function showView(name, anchor) {
+  var curEl = document.querySelector('.view.on');
+  var curName = curEl ? curEl.id.replace('view-', '') : null;
+  if (curName && curName !== name) skScroll[curName] = window.scrollY;
   for (var k in views) views[k].classList.toggle('on', k === name);
   if (location.hash !== '#' + name) { try { history.replaceState(null, '', '#' + name); } catch (e) {} }
+  var nv = views[name];
+  if (nv) { nv.classList.remove('sk-enter'); void nv.offsetWidth; nv.classList.add('sk-enter'); }
   if (anchor) {
     var el = document.getElementById(anchor);
     if (el) { setTimeout(function(){ el.scrollIntoView({behavior:'smooth', block:'start'}); }, 60); return; }
   }
-  window.scrollTo(0, 0);
+  window.scrollTo(0, skScroll[name] || 0);
 }
 document.querySelectorAll('[data-go]').forEach(function (b) {
   b.addEventListener('click', function () { showView(b.getAttribute('data-go'), b.getAttribute('data-anchor')); });
@@ -847,7 +868,7 @@ var SCHED = [
       var v = t.getAttribute("data-sk-go");
       var b = document.querySelector('[data-go="' + v + '"]');
       if (b) b.click(); else if (window.showView) showView(v);
-      setTimeout(sync, 40); scrollTo(0,0);
+      setTimeout(sync, 40);
     });
   });
   document.addEventListener("click", function(){ setTimeout(sync, 40); });
