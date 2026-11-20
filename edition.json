@@ -1,0 +1,28 @@
+{
+  "app": "SHARMATRACK",
+  "edition": "demo",
+  "builder": "Citrus Craft Homes (demo brand)",
+  "builderLogo": "citrus-craft-homes-logo.png",
+  "builderLogoStatus": "on-file",
+  "trades": [
+    "Electrical"
+  ],
+  "liveUrl": "https://sharmaelechvac.github.io/sample-house-citrus-craft-homes/",
+  "repo": "sharmaelechvac/sample-house-citrus-craft-homes",
+  "shell": {
+    "form": "single-page"
+  },
+  "shellSource": "~/workspace/sharmatrack-core (edit the shell there, run tools/sync.py \u2014 never fork shell files here)",
+  "houses": [
+    {
+      "dir": ".",
+      "jobId": "sample-house",
+      "address": "Sample House",
+      "city": null,
+      "trades": [
+        "Electrical"
+      ]
+    }
+  ],
+  "demo": true
+}
